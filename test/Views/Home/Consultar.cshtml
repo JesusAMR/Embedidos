@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Consultar";
+}
+<h2>Consultar</h2>
+@using (Html.BeginForm("FileUpload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="form-group">
+        <label for="file">Upload Image:</label>
+        <input type="file" class="form-control-file" name="file" id="file" style="width: 100%;" />
+        <input type="submit" value="Upload" class="submit" />
+    </div>
+}
+<br />
+<div id="table1">
+    <table class="table table-hover table-light">
+        <thead class="table-striped">
+            <tr>
+                <th scope="col">Numero de Usuario</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Imagen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (System.Data.DataRow row in ViewBag.valores.Rows)
+            {
+                <tr>
+                    @foreach (var item in row.ItemArray)
+                    {
+                        if (!item.Equals(DBNull.Value))
+                        {
+                            <td scope="row">@item</td>
+                        }
+                        else
+                        {
+                            <td scope="row">Vacio</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+ </div>
+

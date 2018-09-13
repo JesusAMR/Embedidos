@@ -1,0 +1,22 @@
+﻿@{
+	ViewBag.Title = "Consultar Cara";
+}
+<h2>Consultar Cara</h2>
+@using (Html.BeginForm("FileUpload", "FaceApi", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+	<div class="form-group">
+		<label for="file">Checar Imagen:</label>
+		<input type="file" class="form-control-file" name="file" id="file" style="width: 100%;" />
+		<input type="submit" value="Upload" class="submit" />
+	</div>
+}
+<br />
+
+@if (ViewBag.valores != null)
+{
+	<div>
+		@ViewBag.valores;
+	</div>
+}
+
+

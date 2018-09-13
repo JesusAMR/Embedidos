@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Consultar Imagenes";
+}
+
+<h2>Consultar Imagenes</h2>
+
+<div id="table1">
+    <table class="table table-hover table-light">
+        <thead class="table-striped">
+            <tr>
+                <th scope="col">Codigo Imagen</th>
+                <th scope="col">Imagen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (System.Data.DataRow row in ViewBag.valores.Rows)
+            {
+            <tr>
+                @foreach (var item in row.ItemArray)
+                {
+                    if (!item.Equals(DBNull.Value) && (item.GetType().Name != "Byte[]"))
+                    {
+                        <td scope="row">@item</td>
+                    }
+                    else if (item.GetType().Name == "Byte[]")
+                    {
+                        System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            bf.Serialize(ms, item);
+                            System.Drawing.Image returnImage = System.Drawing.Image.FromStream(ms);
+                            <td scope="row"><img src="@returnImage" alt="Imagen" /></td>
+                        }
+                    }
+                    else
+                    {
+                        <td scope="row">Vacio</td>
+                    }
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

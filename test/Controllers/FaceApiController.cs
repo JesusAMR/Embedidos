@@ -24,7 +24,7 @@ namespace test.Controllers
         {
 			if (file != null)
 			{
-				ViewBag.valores = await FaceApi.MakeAnalysisRequest(file);
+				ViewBag.valores = await FaceApi.MakeAnalysis(file);
 				return View("ConsultarCara");
 			}
 			else

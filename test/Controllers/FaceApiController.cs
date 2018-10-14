@@ -20,7 +20,7 @@ namespace test.Controllers
 		}
 
 		[HttpPost]
-        public async Task<ActionResult> FileUpload(HttpPostedFileBase file)
+        public async Task<ActionResult> FileUpload(Byte[] file)
         {
 			if (file != null)
 			{

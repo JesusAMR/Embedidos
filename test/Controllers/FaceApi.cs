@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using test.Util;
 using Newtonsoft.Json;
 using System.Text;
+using System.Web.Http;
 
 namespace test.Controllers
 {
@@ -26,18 +27,31 @@ namespace test.Controllers
         private const string faceApiKey = "";
 		private const string baseUrl = "https://southcentralus.api.cognitive.microsoft.com/face/v1.0/";
 
-        public static async Task<string> MakeAnalysis(HttpPostedFileBase file)
+        public static async Task<string> MakeAnalysis(Byte[] file)
         {
             try
             {
+                StringBuilder lsbQuery = new StringBuilder();
                 if (file == null)
                     throw new ArgumentNullException("Archivo vacio");
-                string idCara, json;
+                string idCara, json, idCandidato;
                 json = await MakeAnalysisRequest(file);
                 idCara = Utilerias.findKeyValueinJSon(json, "faceId", 0);
                 if(idCara == null)
                     throw new ArgumentNullException("No se encontro cara");
-                return await IdentifyImagePersonGroup(idCara, grupoPersonas, null);
+                json = await IdentifyImagePersonGroup(idCara, grupoPersonas, null);
+                idCandidato = Utilerias.findKeyValueinJSon(json, "personId", 1);
+                if (idCandidato != null)
+                {
+                    lsbQuery.AppendFormat("insert into registros() values({0}, {1})", idCandidato, 0);
+                    Conneccion.Execute(lsbQuery);
+                }
+                else
+                {
+                    lsbQuery.AppendFormat("insert into registros() values({0}, {1})", idCandidato, 1);
+                    Conneccion.Execute(lsbQuery);
+                }
+                return idCandidato;
             }
             catch (Exception e)
             {
@@ -89,7 +103,7 @@ namespace test.Controllers
 
         }
 
-        private static async Task<string> MakeAnalysisRequest(HttpPostedFileBase file)
+        private static async Task<string> MakeAnalysisRequest(Byte[] file)
         {
 			try
 			{
@@ -107,7 +121,7 @@ namespace test.Controllers
 
 				HttpResponseMessage response;
 
-				byte[] byteData = GetBytesFromHttpFile(file);
+				byte[] byteData = file;
 
 				using (ByteArrayContent content = new ByteArrayContent(byteData))
 				{
@@ -129,8 +143,8 @@ namespace test.Controllers
                 throw e;
             }
         }
-
-        private static byte[] GetBytesFromHttpFile(HttpPostedFileBase file)
+        /*
+        private static byte[] GetBytesFromHttpFile(Byte[] file)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -139,6 +153,6 @@ namespace test.Controllers
 				binaryReader.BaseStream.Position = 0;
 				return binaryReader.ReadBytes((int)file.InputStream.Length);
             }
-        }
+        }*/
     }
 }

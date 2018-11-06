@@ -15,12 +15,10 @@ namespace test.Controllers
 {
     public static class FaceApi
     {
-        private enum Personas {
-            Jesus,
-            Enrique,
-            Jhoana,
-            Tiare,
-            Luis
+        private static Dictionary<string, int> Candidatos = new Dictionary<string, int>()
+		{
+			{ "a44b483c-addd-4e93-a3c5-53868d7daa78", 1}//Jesus
+            
         };
 
         private const int grupoPersonas = 2;
@@ -32,23 +30,27 @@ namespace test.Controllers
             try
             {
                 StringBuilder lsbQuery = new StringBuilder();
+
                 if (file == null)
                     throw new ArgumentNullException("Archivo vacio");
                 string idCara, json, idCandidato;
+
                 json = await MakeAnalysisRequest(file);
                 idCara = Utilerias.findKeyValueinJSon(json, "faceId", 0);
-                if(idCara == null)
+
+                if (idCara == null)
                     throw new ArgumentNullException("No se encontro cara");
+
                 json = await IdentifyImagePersonGroup(idCara, grupoPersonas, null);
                 idCandidato = Utilerias.findKeyValueinJSon(json, "personId", 1);
-                if (idCandidato != null)
-                {
-                    lsbQuery.AppendFormat("insert into registros() values({0}, {1})", idCandidato, 0);
-                    Conneccion.Execute(lsbQuery);
-                }
+				if(Utilerias.findKey(idCandidato, Candidatos) != null)
+				{
+					lsbQuery.AppendFormat("insert into registros(iCodUsuario, bValido) values({0}, {1})", idCandidato, 0);
+					Conneccion.Execute(lsbQuery);
+				}
                 else
                 {
-                    lsbQuery.AppendFormat("insert into registros() values({0}, {1})", idCandidato, 1);
+                    lsbQuery.AppendFormat("insert into registros(iCodUsuario, bValido) values({0}, {1})", null, 1);
                     Conneccion.Execute(lsbQuery);
                 }
                 return idCandidato;
@@ -75,10 +77,12 @@ namespace test.Controllers
                     personGroupID = grupoPersonas;
                 if (confidenceThreshold == null)
                     confidenceThreshold = 0.6;
+
                 candidato.faceIds = new string[] { faceID };
                 candidato.confidenceThreshold = confidenceThreshold;
                 candidato.maxNumOfCandidatesReturned = 1;
                 candidato.personGroupId = personGroupID;
+
                 string output = JsonConvert.SerializeObject(candidato);
 
                 client.DefaultRequestHeaders.Add(

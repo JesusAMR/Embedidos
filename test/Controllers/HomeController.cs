@@ -29,13 +29,13 @@ namespace test.Controllers
         
         public ActionResult Consultar()
         {
-            StringBuilder lsbQuery = new StringBuilder();
-            DataTable valores = new DataTable();
-            lsbQuery.Append("select * from usuarios");
-            ViewBag.valores = Controllers.Conneccion.ExecuteDataTable(lsbQuery);
-            return View();
-        }
-
+			StringBuilder lsbQuery = new StringBuilder();
+			DataTable valores = new DataTable();
+			lsbQuery.Append("select r.iCodUsuario, r.vchNombre, u.dtFecha, r.bValido from registros r inner join usuarios u on r.iCodUsuario = u.iCodUsuario");
+			ViewBag.valores = Conneccion.ExecuteDataTable(lsbQuery);
+			return View();
+		}
+		/*
         [HttpPost]
         public ActionResult FileUpload(HttpPostedFileBase file)
         {
@@ -62,18 +62,18 @@ namespace test.Controllers
                 }
                 
                 
-                Controllers.Conneccion.Execute(lsbQuery);
+                Conneccion.Execute(lsbQuery);
             }
             // after successfully uploading redirect the user
             return RedirectToAction("Index", "Home");
         }
-
+		*/
         public ActionResult ConsultarImagenes()
         {
             StringBuilder lsbQuery = new StringBuilder();
             DataTable valores = new DataTable();
-            lsbQuery.Append("select * from imagenes");
-            ViewBag.valores = Controllers.Conneccion.ExecuteDataTable(lsbQuery);
+            lsbQuery.Append("select * from registros r inner join usuarios u on r.iCodUsuario = u.iCodUsuario");
+            ViewBag.valores = Conneccion.ExecuteDataTable(lsbQuery);
             return View();
         }
     }

@@ -19,7 +19,6 @@ namespace test.Controllers
             byte[] file = await Request.Content.ReadAsByteArrayAsync();
             var x = await FaceApi.MakeAnalysis(file);
             var response = Request.CreateResponse(System.Net.HttpStatusCode.Accepted);
-
         }
     }
 }

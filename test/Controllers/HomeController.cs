@@ -31,7 +31,9 @@ namespace test.Controllers
         {
 			StringBuilder lsbQuery = new StringBuilder();
 			DataTable valores = new DataTable();
-			lsbQuery.Append("select r.iCodUsuario, r.vchNombre, u.dtFecha, r.bValido from registros r inner join usuarios u on r.iCodUsuario = u.iCodUsuario");
+			lsbQuery.Append("select r.iCodRegistro, case isnull(r.iCodUsuario, -1) when -1 then 'No identificado' else u.vchNombre end as vchNombre, getdate(), cast(r.bValido as tinyint)");
+			lsbQuery.Append("from registros r ");
+			lsbQuery.AppendLine("left join usuarios u on r.iCodUsuario = u.iCodUsuario");
 			ViewBag.valores = Conneccion.ExecuteDataTable(lsbQuery);
 			return View();
 		}

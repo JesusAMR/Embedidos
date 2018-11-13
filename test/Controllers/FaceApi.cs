@@ -30,6 +30,7 @@ namespace test.Controllers
             try
             {
                 StringBuilder lsbQuery = new StringBuilder();
+				int? id;
 
                 if (file == null)
                     throw new ArgumentNullException("Archivo vacio");
@@ -43,14 +44,21 @@ namespace test.Controllers
 
                 json = await IdentifyImagePersonGroup(idCara, grupoPersonas, null);
                 idCandidato = Utilerias.findKeyValueinJSon(json, "personId", 1);
-				if(Utilerias.findKey(idCandidato, Candidatos) != null)
+				if(idCandidato == null)
 				{
-					lsbQuery.AppendFormat("insert into registros(iCodUsuario, bValido) values({0}, {1})", idCandidato, 0);
+					lsbQuery.AppendFormat("insert into registros(bValido) values(1)");
+					Conneccion.Execute(lsbQuery);
+					return null;
+				}
+				id = Utilerias.findKey(idCandidato, Candidatos);
+				if(id != null)
+				{
+					lsbQuery.AppendFormat("insert into registros(iCodUsuario, bValido) values({0}, {1})", id, 0);
 					Conneccion.Execute(lsbQuery);
 				}
                 else
                 {
-                    lsbQuery.AppendFormat("insert into registros(iCodUsuario, bValido) values({0}, {1})", null, 1);
+                    lsbQuery.AppendFormat("insert into registros(bValido) values({0})", 1);
                     Conneccion.Execute(lsbQuery);
                 }
                 return idCandidato;
@@ -96,9 +104,9 @@ namespace test.Controllers
                 }
 
                 responseContent = await response.Content.ReadAsStringAsync();
-                return responseContent;
+				return responseContent.Trim('[', ']');
 
-            }
+			}
             catch (Exception e)
             {
                 throw e;

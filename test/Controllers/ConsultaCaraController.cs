@@ -17,7 +17,7 @@ namespace test.Controllers
         public async void Post()
         {
             byte[] file = await Request.Content.ReadAsByteArrayAsync();
-            var x = await FaceApi.MakeAnalysis(file);
+            await FaceApi.MakeAnalysis(file);
             var response = Request.CreateResponse(System.Net.HttpStatusCode.Accepted);
         }
     }

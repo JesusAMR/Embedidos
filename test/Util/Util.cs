@@ -11,12 +11,28 @@ namespace test.Util
 {
 	public static class Utilerias
 	{
+		
+		public static string findKeyValueinJSon(JObject jObject, string key)
+		{
+			foreach (var jToken in jObject)
+			{
+				if (jToken.Key.ToString().Equals(key)) { 
+					if(jToken.Value.HasValues)
+						return findKeyValueinJSon((JObject)jToken.Value.First, key);
+					return jToken.Value.ToString(); 
+				}
+				else if (jToken.Value.HasValues)
+					return findKeyValueinJSon((JObject)jToken.Value.First, key);
+			}
+			return null;
+		}
 		public static string findKeyValueinJSon(string json, string key, int valueIndex)
 		{
-			string value;
 			JObject jObject = JObject.Parse(json);
-			value = jObject[key].ToString();
-			return value;
+			if (jObject != null)
+				return findKeyValueinJSon(jObject, key);
+			else
+				return null;
 		}
 
 		public static void insertarRegistro(string candidato)
